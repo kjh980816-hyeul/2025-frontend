@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* inline 태그, 필요한 width 공간만 차지
+            가로, 세로 크기 지정 무시
+            */
+        span { background-color:blue; color:white;}
+        /* block 태그, 부모의 width 크기를 차지*/
+        div { display:block;
+            background-color: coral;}
+            span, div {width: 240px; height: 50px;
+            margin-bottom:20px;}
+    </style>
+    <title>spandiv.html</title>
+</head>
+<body>
+    <span>span 요소</span>
+
+    <div>div 요소</div>
+
+    <span>span 요소</span>
+    <span>span 요소</span>
+
+    <div>div 요소</div>
+    <div>div 요소</div>
+
+    <span>span 요소</span>
+    <span>span 요소</span>
+    <span>span 요소</span>
+    
+    <div>div 요소</div>
+    <div>div 요소</div>
+    <div>div 요소</div>
+</body>
+</html>

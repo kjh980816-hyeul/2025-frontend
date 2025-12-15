@@ -1,0 +1,11 @@
+.outer li {color:olivedrab;}
+.outer>li {color:dodgerblue;}
+.outer>li li {text-decoration:underline;}
+/* general sibling 선택자 (일반) */
+.starter ~ li { font-style: italic;}
+/* adjancent sibling 선택자 (인접) */
+.starter + li { font-weight:bold;}
+/* 가상 선택자 */
+ol li:first-child,
+ol li:last-child {color:yellowgreen;}
+.outer > li:not(:last-child) {text-decoration:line-through;}

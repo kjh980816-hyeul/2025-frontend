@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>boxsizing.html</title>
+    <style>
+        .container div { width: 200px; height: 200px; border: 2px solid #ccc; 
+        padding: 5px;
+        background-color:bisque;}
+        .cls1 {box-sizing:content-box;}
+        /* box-sizing은 기본적으로 content 기준으로 크기가 정해져 있으며 그 기준을 변경하는 속성 
+                    border을 준다면 border의 전체 값을 200*200이 된다는 뜻*/
+                    /* border-radius란 모서리를 둥글게 만들어 준다 */
+        .cls2 { box-sizing:border-box; border-radius:2em;}
+        div:not(:last-of-type) {margin-bottom:30px;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cls1">cls1</div>
+        <div class="cls2">cls2</div>
+        <div class="cls3">cls3</div>
+        <div class="cls3">cls3</div>
+        <div class="cls3">cls3</div>
+        <div class="cls3">cls3</div>
+        <div class="cls3">cls3</div>
+        <div class="cls3">cls3</div>
+        <div class="cls3">cls3</div>
+        <div class="cls3">cls3</div>
+        <div class="cls3">cls3</div>
+        <div class="cls3">cls3</div>
+        <div class="cls3">cls3</div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>zindex.html</title>
+  <style>
+    div { width: 100px; height: 100px; position: absolute;}
+    /* z-index란 상대적으로 더 위에 올라오게 하는 속성 ( 숫자가 클 수록 더 위에 보임) */
+    .cls-a { z-index: 2; background-color: red;}
+    .cls-b { z-index: 3; background-color: blue; left: 50px; top: 50px;}
+    .cls-c { z-index: 1; background-color: chartreuse; left: 100px; top: 100px;}
+  </style>
+</head>
+<body>
+    <div class="cls-a">A</div>
+    <div class="cls-b">B</div>
+    <div class="cls-c">C</div>
+</body>
+</html>

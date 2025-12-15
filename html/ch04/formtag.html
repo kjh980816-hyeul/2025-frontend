@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>formtag.html</title>
+</head>
+<body>
+    <form action="./01-result.html" method="get" autocomplete="off"> <!-- form 방식은 get, post 두가지 방식 밖에 없음-->
+
+        
+        <label for="name">이름</label> <!-- label 태그는 이름을 클릭했을 때 이름 적는 칸으로 연결 시키는 역할임-->
+        <input id="name" name="my_name" type="text"> <!--값을 입력할 수 있는 태그-->
+        <!-- <label>
+                이름 <input type="text" name="my_name">
+            </label> 으로 해도 똑같이 label로 연결할 수 있다 -->
+        <br><br>
+        <label for="age">나이</label>
+        <input id="age" name="my_age" type="number">
+        <br><br>
+        <button type="submit">제출</button>
+        <button type="reset">초기화</button> <br>
+        <label> <input type="radio" value="1">몇번?</label>
+    </form>
+</body>
+</html>
