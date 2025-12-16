@@ -10,3 +10,4 @@ if (val < 0) {
 else {
   console.log(val);
 };
+
