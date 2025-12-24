@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DOM 계산기 (16버튼)</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #0f1115;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", sans-serif;
+      color: #e8e8e8;
+    }
+    .calc {
+      width: 320px;
+      padding: 16px;
+      border-radius: 16px;
+      background: #171a21;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+    }
+    .display {
+      height: 72px;
+      padding: 14px 14px;
+      border-radius: 12px;
+      background: #0c0e12;
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      font-size: 34px;
+      font-weight: 700;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .sub {
+      margin-top: 8px;
+      height: 20px;
+      color: rgba(232,232,232,0.6);
+      font-size: 12px;
+      display: flex;
+      justify-content: flex-end;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .grid {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    button {
+      height: 56px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: #232834;
+      color: #e8e8e8;
+      font-size: 18px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: transform 0.04s ease;
+      user-select: none;
+    }
+    button:active { transform: translateY(1px); }
+    button.op { background: #2b2f3d; }
+    button.eq { background: #3a4052; }
+    button.zero { grid-column: span 2; }
+  </style>
+</head>
+<body>
+  <div class="calc" id="calc">
+    <div class="display" id="display">0</div>
+    <div class="sub" id="sub"></div>
+
+    <div class="grid">
+      <!-- 16 버튼 구성 -->
+      <button data-key="7">7</button>
+      <button data-key="8">8</button>
+      <button data-key="9">9</button>
+      <button class="op" data-op="/">÷</button>
+
+      <button data-key="4">4</button>
+      <button data-key="5">5</button>
+      <button data-key="6">6</button>
+      <button class="op" data-op="*">×</button>
+
+      <button data-key="1">1</button>
+      <button data-key="2">2</button>
+      <button data-key="3">3</button>
+      <button class="op" data-op="-">−</button>
+
+      <button class="zero" data-key="0">0</button>
+      <button data-key=".">.</button>
+      <button class="op" data-op="+">+</button>
+
+      <button class="eq" data-action="eq">=</button>
+    </div>
+
+    <p style="margin:12px 2px 0; font-size:12px; color:rgba(232,232,232,0.55);">
+      키보드: 숫자/+-*/. , Enter(=), Backspace(지우기), Esc(초기화)
+    </p>
+  </div>
+
+  <script>
+    // ---- DOM ----
+    const display = document.querySelector("#display");
+    const sub = document.querySelector("#sub");
+    const calc = document.querySelector("#calc");
+
+    // ---- 상태 ----
+    let current = "0";   // 화면에 입력 중인 숫자(문자열)
+    let prev = null;     // 이전 값(숫자)
+    let op = null;       // 연산자: + - * /
+    let justEvaluated = false;
+
+    // ---- 유틸 ----
+    function formatNumber(n) {
+      // 너무 길면 지수표기 대신 적당히 잘라 보여주기
+      const s = String(n);
+      if (s.length <= 12) return s;
+      // 큰/작은 수는 toPrecision으로 보기 좋게
+      if (Number.isFinite(n)) return n.toPrecision(10).replace(/\.?0+$/, "");
+      return "Error";
+    }
+
+    function setDisplay(value) {
+      display.textContent = value;
+    }
+
+    function setSub(value) {
+      sub.textContent = value;
+    }
+
+    function resetAll() {
+      current = "0";
+      prev = null;
+      op = null;
+      justEvaluated = false;
+      setDisplay("0");
+      setSub("");
+    }
+
+    function inputDigit(d) {
+      if (justEvaluated) {
+        // = 직후 숫자 입력이면 새로 시작
+        current = "0";
+        prev = null;
+        op = null;
+        justEvaluated = false;
+        setSub("");
+      }
+
+      if (current === "0") {
+        current = d;
+      } else {
+        current += d;
+      }
+      setDisplay(current);
+    }
+
+    function inputDot() {
+      if (justEvaluated) {
+        current = "0";
+        prev = null;
+        op = null;
+        justEvaluated = false;
+        setSub("");
+      }
+
+      if (!current.includes(".")) {
+        current += ".";
+        setDisplay(current);
+      }
+    }
+
+    function backspace() {
+      if (justEvaluated) return; // = 직후엔 지우기 대신 새 입력 권장
+      if (current.length <= 1) current = "0";
+      else current = current.slice(0, -1);
+      setDisplay(current);
+    }
+
+    function compute(a, operator, b) {
+      switch (operator) {
+        case "+": return a + b;
+        case "-": return a - b;
+        case "*": return a * b;
+        case "/": return b === 0 ? NaN : a / b;
+        default: return b;
+      }
+    }
+
+    function chooseOperator(nextOp) {
+      const curNum = Number(current);
+
+      if (prev === null) {
+        // 처음 연산자 선택
+        prev = curNum;
+      } else if (op !== null && !justEvaluated) {
+        // 연속 입력: 2 + 3 + 4 처럼 앞 계산부터 진행
+        const result = compute(prev, op, curNum);
+        prev = result;
+        setDisplay(formatNumber(result));
+      }
+
+      op = nextOp;
+      current = "0";
+      justEvaluated = false;
+
+      const symbol = op === "*" ? "×" : op === "/" ? "÷" : op;
+      setSub(`${formatNumber(prev)} ${symbol}`);
+    }
+
+    function evaluate() {
+      if (op === null || prev === null) return;
+
+      const a = prev;
+      const b = Number(current);
+      const result = compute(a, op, b);
+
+      if (!Number.isFinite(result)) {
+        setDisplay("Error");
+        setSub("");
+        // 에러 이후 초기화
+        current = "0";
+        prev = null;
+        op = null;
+        justEvaluated = true;
+        return;
+      }
+
+      const symbol = op === "*" ? "×" : op === "/" ? "÷" : op;
+      setSub(`${formatNumber(a)} ${symbol} ${formatNumber(b)} =`);
+      setDisplay(formatNumber(result));
+
+      // 결과를 다음 계산의 prev로 둬서 연속 계산 가능
+      prev = result;
+      op = null;
+      current = String(result);
+      justEvaluated = true;
+    }
+
+    // ---- 클릭 이벤트(이벤트 위임) ----
+    calc.addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+
+      const key = btn.dataset.key;
+      const operator = btn.dataset.op;
+      const action = btn.dataset.action;
+
+      if (key !== undefined) {
+        if (key === ".") inputDot();
+        else inputDigit(key);
+        return;
+      }
+
+      if (operator) {
+        chooseOperator(operator);
+        return;
+      }
+
+      if (action === "eq") {
+        evaluate();
+      }
+    });
+
+    // ---- 키보드 지원 ----
+    window.addEventListener("keydown", (e) => {
+      const k = e.key;
+
+      if (k >= "0" && k <= "9") {
+        inputDigit(k);
+        return;
+      }
+      if (k === ".") {
+        inputDot();
+        return;
+      }
+      if (k === "+" || k === "-" || k === "*" || k === "/") {
+        chooseOperator(k);
+        return;
+      }
+      if (k === "Enter" || k === "=") {
+        e.preventDefault();
+        evaluate();
+        return;
+      }
+      if (k === "Backspace") {
+        backspace();
+        return;
+      }
+      if (k === "Escape") {
+        resetAll();
+      }
+    });
+  </script>
+</body>
+</html>

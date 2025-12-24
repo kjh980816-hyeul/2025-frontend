@@ -27,11 +27,21 @@
 
             const $inputColorClear = makeElement('input', {type: 'button', value: 'Clear'});
             target.append($inputColorClear);
+            $inputColorClear.addEventListener('click',function() {
+            const tdList = document.querySelectorAll('td');
+            for (let n = 0 ; n < tdList.length; n++)
+                tdList[n].style.backgroundColor = '';
+                    }
+            )
+            // for(const item of tdList) {
+            // item.style.backgroundColor = '';
+            // }
 
             const $table = makeElement('table');
             target.append($table);
             $table.style.borderCollapse = 'collapse';
             $table.style.marginTop = '5px';
+            $table.style.backgroundColor = '';
 
             for(let y = 0 ; y<ny; y++) { //줄 담당
                 const $tr = makeElement('tr');
@@ -41,11 +51,25 @@
                     $tr.append($td);
                     $td.style.width = $tr.style.height = '15px';
                     $td.style.border = '1px solid gray';
+
+                    $td.addEventListener('click',function() {
+                        // 클로져 closure
+                    if ($td.style.backgroundColor) {
+                        $td.style.backgroundColor = '';
+                            }
+                            else {
+                                $td.style.backgroundColor = $inputColor.value
+                            }
+                        }
+                    )
+                
                 }
-            }
+            }            
         }
         const $editor = document.querySelector('#editor');
-        createIconEditor($editor, 20, 20);
+        createIconEditor($editor, 21, 21);
+
+        
     </script>
 </body>
 </html>
