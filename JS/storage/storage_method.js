@@ -19,13 +19,13 @@ arr 배열에 객체 100개를 담는다.
     }
     arr.push(obj);
   }
-  // console.log(arr)
+  console.log(arr)
   //find 이용하지 않고 id값이 20인 객체의 주소값을 찾아주세요.
-  let result = null;
-  for(let i = 1 ; i<=100 ; i++) {
-    if(arr[i].id === 20) {
-      result = arr[i]
-      break;
-    }
-  }
-  console.log(result);
+  // let result = null;
+  // for(let i = 1 ; i<=100 ; i++) {
+  //   if(arr[i].id === 20) {
+  //     result = arr[i]
+  //     break;
+  //   }
+  // }
+  // console.log(result);
